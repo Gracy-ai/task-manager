@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>ProFlow - Accès</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        /* Optionnel : pour assurer que l'image ne dépasse jamais son conteneur */
+        .logo-container img {
+            max-width: 100%;
+            height: auto;
+        }
+    </style>
+</head>
+<body class="bg-slate-900 flex items-center justify-center h-screen">
+
+<div class="login-box w-[400px] bg-white p-8 rounded-3xl shadow-2xl border border-slate-700/50">
+
+    <div class="flex flex-col items-center mb-10">
+        <div class="w-24 h-24 mb-4 overflow-hidden rounded-2xl shadow-lg border-2 border-slate-50 bg-white flex items-center justify-center">
+            <img src="/logo.png" alt="Logo ProFlow" class="object-contain w-full h-full">
+        </div>
+
+        <h1 class="text-2xl font-black text-slate-800 tracking-tight uppercase">
+            PRO<span class="text-blue-600">FLOW</span>
+        </h1>
+        <div class="h-1.5 w-12 bg-blue-600 rounded-full mt-2"></div>
+    </div>
+
+    <div id="login-form">
+        <div class="text-center mb-8">
+            <h2 class="text-xl font-bold text-slate-800">Bon retour !</h2>
+            <p class="text-slate-400 text-sm">Accédez à votre espace de travail</p>
+        </div>
+
+        <div class="space-y-4">
+            <div class="relative">
+                <input type="email" id="login-email" placeholder="Email professionnel"
+                       class="w-full p-3 pl-10 border-2 border-slate-100 rounded-xl outline-none focus:border-blue-500 transition-all bg-slate-50">
+                <i class="fa-solid fa-envelope absolute left-3 top-4 text-slate-400"></i>
+            </div>
+
+            <div class="relative">
+                <input type="password" id="login-password" placeholder="Mot de passe"
+                       class="w-full p-3 pl-10 border-2 border-slate-100 rounded-xl outline-none focus:border-blue-500 transition-all bg-slate-50">
+                <i class="fa-solid fa-lock absolute left-3 top-4 text-slate-400"></i>
+            </div>
+
+            <button onclick="handleLogin()"
+                    class="w-full bg-blue-600 text-white py-4 rounded-xl font-black hover:bg-blue-700 transition shadow-lg shadow-blue-600/20 active:scale-[0.98]">
+                SE CONNECTER
+            </button>
+        </div>
+
+        <p class="text-sm text-center mt-8 text-slate-500 font-medium">
+            Nouveau ici ? <a href="#" onclick="toggleAuth()" class="text-blue-600 font-bold hover:underline">Créer un compte</a>
+        </p>
+    </div>
+
+    <div id="register-form" class="hidden">
+        <div class="text-center mb-8">
+            <h2 class="text-xl font-bold text-slate-800">Créer un compte</h2>
+            <p class="text-slate-400 text-sm">Rejoignez l'équipe ProFlow</p>
+        </div>
+        <div class="space-y-4">
+            <input type="text" id="reg-name" placeholder="Nom complet" class="w-full p-3 border-2 border-slate-100 rounded-xl outline-none focus:border-green-500 bg-slate-50 text-sm">
+            <input type="email" id="reg-email" placeholder="Email" class="w-full p-3 border-2 border-slate-100 rounded-xl outline-none focus:border-green-500 bg-slate-50 text-sm">
+            <input type="password" id="reg-password" placeholder="Mot de passe" class="w-full p-3 border-2 border-slate-100 rounded-xl outline-none focus:border-green-500 bg-slate-50 text-sm">
+            <button onclick="handleRegister()" class="w-full bg-green-600 text-white py-4 rounded-xl font-black hover:bg-green-700 transition shadow-lg shadow-green-600/20 active:scale-[0.98]">
+                S'INSCRIRE
+            </button>
+        </div>
+        <p class="text-sm text-center mt-8 text-slate-500 font-medium">
+            Déjà un compte ? <a href="#" onclick="toggleAuth()" class="text-blue-600 font-bold hover:underline">Se connecter</a>
+        </p>
+    </div>
+
+    <p id="msg-box" class="mt-6 p-4 rounded-xl text-center text-sm font-bold hidden"></p>
+</div>
+
+<script>
+    function toggleAuth() {
+        document.getElementById('login-form').classList.toggle('hidden');
+        document.getElementById('register-form').classList.toggle('hidden');
+        document.getElementById('msg-box').classList.add('hidden');
+    }
+
+    function showMsg(text, isError = false) {
+        const box = document.getElementById('msg-box');
+        box.innerText = text;
+        box.className = `mt-6 p-4 rounded-xl text-center text-sm font-bold ${isError ? 'bg-red-50 text-red-600' : 'bg-green-50 text-green-600'}`;
+        box.classList.remove('hidden');
+    }
+
+    async function handleLogin() {
+        const email = document.getElementById('login-email').value;
+        const password = document.getElementById('login-password').value;
+
+        if(!email || !password) {
+            showMsg("Veuillez remplir tous les champs", true);
+            return;
+        }
+
+        try {
+            const res = await fetch('/api/users/login', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ email, password })
+            });
+
+            if (res.ok) {
+                const data = await res.json();
+                localStorage.setItem('token', data.token);
+                localStorage.setItem('myEmail', data.email);
+                localStorage.setItem('userId', data.id);
+                localStorage.setItem('role', data.role);
+
+                if (data.role === "ADMIN") {
+                    window.location.href = "admin.html";
+                } else {
+                    window.location.href = "index.html";
+                }
+            } else {
+                showMsg("Email ou mot de passe incorrect", true);
+            }
+        } catch (error) {
+            showMsg("Erreur de connexion au serveur", true);
+        }
+    }
+
+    async function handleRegister() {
+        const name = document.getElementById('reg-name').value;
+        const email = document.getElementById('reg-email').value;
+        const password = document.getElementById('reg-password').value;
+
+        try {
+            const res = await fetch('/api/users', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ name, email, password, role: "USER" })
+            });
+
+            if (res.ok) {
+                showMsg("Compte créé ! Redirection...");
+                setTimeout(toggleAuth, 1500);
+            } else {
+                showMsg("Erreur lors de l'inscription", true);
+            }
+        } catch (error) {
+            showMsg("Erreur serveur", true);
+        }
+    }
+
+    // On récupère les champs de saisie
+const emailInput = document.getElementById('login-email');
+const passwordInput = document.getElementById('login-password');
+
+// Fonction qui vérifie si la touche pressée est "Entrée"
+const checkEnter = (event) => {
+    if (event.key === "Enter") {
+        event.preventDefault(); // Évite de recharger la page inutilement
+        handleLogin(); // Appelle ta fonction de connexion existante
+    }
+};
+
+// On ajoute l'écouteur sur les deux champs
+emailInput.addEventListener('keydown', checkEnter);
+passwordInput.addEventListener('keydown', checkEnter);
+</script>
+</body>
+</html>

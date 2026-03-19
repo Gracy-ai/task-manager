@@ -1,0 +1,122 @@
+:root {
+    --primary: #2563eb;
+    --primary-light: #dbeafe;
+    --bg-light: #f8fafc;
+    --border-color: #cbd5e1;
+}
+
+body {
+    margin: 0;
+    font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+    background-color: var(--bg-light);
+}
+
+/* --- NAVIGATION SIDEBAR --- */
+
+.nav-btn {
+    color: var(--primary-light) !important;
+    transition: all 0.2s ease-in-out;
+    background: transparent !important;
+    /* On prépare une bordure transparente pour éviter que le bouton "saute" quand il devient actif */
+    border: 1px solid transparent !important;
+    margin: 4px 12px !important;
+    width: calc(100% - 24px) !important;
+    display: flex !important;
+    align-items: center !important;
+    cursor: pointer;
+}
+
+.nav-btn i {
+    color: var(--primary-light) !important;
+}
+
+/* --- ÉTAT ACTIF : CADRE TRANSPARENT STYLE "GLASS" --- */
+.active-link {
+    /* Fond blanc subtilement brillant */
+    background-color: rgba(255, 255, 255, 0.12) !important;
+
+    /* LE CADRE : on utilise une couleur plus vive (0.5) pour qu'il soit bien visible */
+    border: 1px solid rgba(255, 255, 255, 0.5) !important;
+
+    color: #ffffff !important;
+    font-weight: 700 !important;
+
+    /* Ombre portée pour décoller le bouton du fond */
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2) !important;
+
+    /* Effet de flou (Glassmorphism) */
+    backdrop-filter: blur(8px) !important;
+    -webkit-backdrop-filter: blur(8px); /* Pour Safari */
+}
+
+/* Force l'icône en blanc dans le cadre actif */
+.active-link i {
+    color: #ffffff !important;
+}
+
+/* Effet au survol des autres boutons */
+.nav-btn:hover:not(.active-link) {
+    background-color: rgba(255, 255, 255, 0.05) !important;
+    color: #ffffff !important;
+}
+
+/* --- GRILLE DE PROJETS --- */
+#project-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+    gap: 2rem;
+}
+
+.project-box {
+    background: white;
+    padding: 2rem;
+    border-radius: 20px;
+    border: 2px solid var(--border-color);
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+    transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+.project-box:hover {
+    transform: translateY(-8px);
+    border-color: var(--primary);
+    box-shadow: 0 20px 25px -5px rgba(37, 99, 235, 0.1);
+}
+
+.hidden { display: none !important; }
+
+/* --- BOUTON NOUVEAU PROJET HARMONISÉ --- */
+.btn-new-project {
+    margin: 10px 15px !important;
+    padding: 12px !important;
+    background-color: rgba(34, 197, 94, 0.1) !important; /* Vert très léger */
+    border: 1px solid rgba(34, 197, 94, 0.4) !important; /* Bordure verte transparente */
+    color: #4ade80 !important; /* Texte vert clair */
+    border-radius: 12px !important;
+    font-weight: 700 !important;
+    transition: all 0.3s ease !important;
+}
+
+.btn-new-project:hover {
+    background-color: rgba(34, 197, 94, 0.2) !important;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(34, 197, 94, 0.2);
+}
+
+/* --- EFFET DE CADRE ACTIF AMÉLIORÉ --- */
+.active-link {
+    background-color: rgba(255, 255, 255, 0.1) !important;
+    border: 1px solid rgba(255, 255, 255, 0.3) !important; /* Cadre fin et constant */
+    border-radius: 12px !important;
+    margin: 4px 15px !important;
+    width: calc(100% - 30px) !important;
+    color: #ffffff !important;
+}
+
+/* --- ALIGNEMENT DES CARTES (PROJET GRID) --- */
+.project-box {
+    display: flex;
+    flex-direction: column;
+    height: 100%; /* Force toutes les cartes à avoir la même hauteur */
+    min-height: 200px;
+    justify-content: space-between;
+}
